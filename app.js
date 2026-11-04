@@ -675,18 +675,23 @@ function initStudioCarousel() {
     return f;
   });
 
-  // Duplicate 3 times for a seamless infinite loop
-  const loopList = [...normalizedFotos, ...normalizedFotos, ...normalizedFotos];
+  // If track already has pre-rendered cards in HTML, do NOT wipe DOM to avoid layout flicker/delay
+  const existingCards = track.querySelectorAll('.estudio-card');
+  if (existingCards.length === 0) {
+    // Seamless 2-fold loop matching CSS translateX(-50%)
+    const loopList = [...normalizedFotos, ...normalizedFotos];
 
-  track.innerHTML = loopList.map((item, i) => `
-    <div class="estudio-card" data-idx="${i % normalizedFotos.length}" tabindex="0" role="button" aria-label="Espaço Dra. Helena">
-      <img src="${item.src}" alt="Espaço da clínica" loading="lazy" width="600" height="450" />
-      <span class="estudio-card-badge">
-        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
-      </span>
-    </div>
-  `).join('');
+    track.innerHTML = loopList.map((item, i) => `
+      <div class="estudio-card" data-idx="${i % normalizedFotos.length}" tabindex="0" role="button" aria-label="${item.titulo || 'Espaço Instituto Áurea'}">
+        <img src="${item.src}" alt="${item.titulo || 'Espaço da clínica Instituto Áurea'}" loading="eager" fetchpriority="${i < 4 ? 'high' : 'auto'}" decoding="async" width="600" height="450" />
+        <span class="estudio-card-badge">
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
+        </span>
+      </div>
+    `).join('');
+  }
 
+  // Attach event listeners to all cards for instant lightbox interaction
   track.querySelectorAll('.estudio-card').forEach(card => {
     const clickHandler = () => {
       const idx = parseInt(card.dataset.idx, 10);

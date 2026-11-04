@@ -1950,8 +1950,12 @@ p.sub, .sec-sub {
   display: flex;
   gap: 20px;
   width: max-content;
-  animation: estudioInfiniteMarquee 32s linear infinite;
+  animation: estudioInfiniteMarquee 30s linear infinite;
   will-change: transform;
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
+  contain: layout style;
 }
 
 .estudio-carousel-wrap:hover .estudio-carousel-track,
